@@ -2,8 +2,52 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/mvc
+                           http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd">
 
+    <!-- 配置扫描的包，该包下标记为组件的class 会被自动扫描为spring的bean，被容器管理 -->
     <context:component-scan base-package="com.dc18669.first"/>
-    <context:component-scan base-package="com.dc18669.first"/>
+    <!-- 注册mvc的注解驱动，是的@RequestMapping相关注解生效 -->
+    <mvc:annotation-driven />
+
+    <!-- 注册十五的注解驱动，是的@Transactional注解生效 -->
+    <tx:annotation-driven />
+
+    <!-- 访问静态资源 -->
+    <mvc:default-servlet-handler />
+
+    <!-- 视图解析器，支持JSP -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 视图默认从 /WEB-INF/view/ 路径查找模板 -->
+        <property name="prefix" value="/WEB-INF/view/" />
+        <!-- 视图名后缀为 .jsp -->
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
+        <!-- 数据源连接属性 -->
+        <property name="url" value="jdbc:mysql://localhost:3306/test?serverTimezone=UTC" />
+
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="username" value="root" />
+        <property name="password" value="mengdefang.5211314" />
+    </bean>
+
+    <!-- 数据库操作模板 Bean -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
 </beans>

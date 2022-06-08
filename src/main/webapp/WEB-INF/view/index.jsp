@@ -5,8 +5,7 @@
   <title>JSP - Hello World</title>
 </head>
 <body>
-<h1><%= "Hello World!" %></h1>
-<br/>
-<a href="hello-servlet">Hello Servlet</a>
+  <!-- 使用 $ {} 形式的EL表达式引用 Model 中的 name 属性 -->
+  <h2>Hello ${name}</h2>
 </body>
 </html>

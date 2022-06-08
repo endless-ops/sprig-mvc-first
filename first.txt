@@ -1,0 +1,82 @@
+一、访问静态资源
+    1.三种方式
+        a.激活Tomcat的defaultServlet来处理静态文件
+          在web.xml中配置如下且以上配置要写在DispatcherServlet之前。
+
+          <servlet-mapping>
+              <servlet-name>default</servlet-name>
+              <url-pattern>*.html</url-pattern>
+          </servlet-mapping>
+          <servlet-mapping>
+              <servlet-name>default</servlet-name>
+              <url-pattern>*.jpg</url-pattern>
+          </servlet-mapping>
+          <servlet-mapping>
+              <servlet-name>default</servlet-name>
+              <url-pattern>*.js</url-pattern>
+          </servlet-mapping>
+          <servlet-mapping>
+              <servlet-name>default</servlet-name>
+              <url-pattern>*.css</url-pattern>
+          </servlet-mapping>
+
+          只要请求进来，想让DefaultServle进行拦截，这样就不会先进入Spring了.
+
+          Tomcat, Jetty, JBoss, and GlassFish 默认 Servlet的名字 – “default”
+
+          Google App Engine 默认 Servlet的名字 – “_ah_default”
+
+          Resin 默认 Servlet的名字 – “resin-file”
+
+          WebLogic 默认 Servlet的名字 – “FileServlet”
+
+          WebSphere 默认 Servlet的名字 – “SimpleFileServlet”
+
+        b.在Spring的配置中使用mvc:resources
+          <mvc:resources mapping="/resource/**" location="/resource/"></mvc:resources>
+          <mvc:resources mapping="/**" location="/"></mvc:resources>
+
+          /代表在webapp目录下。
+
+
+
+          使用 < mvc:resources /> 元素,把 mapping 的 URI 注册到 SimpleUrlHandlerMapping的urlMap 中,key 为 mapping 的 URI pattern值,而value为 ResourceHttpRequestHandler,这样就巧妙的把对静态资源的访问由 HandlerMapping 转到ResourceHttpRequestHandler 处理并返回,因此就支持 classpath 目录, jar 包内静态资源的访问.另外须要注意的一点是,不要对 SimpleUrlHandlerMapping 设置 defaultHandler. 由于对 static uri 的 defaultHandler 就是ResourceHttpRequestHandler,不然没法处理static resources request.
+
+          mapping：映射
+          location：本地资源路径，注意必须是webapp根目录下的路径。
+          两个*，它表示映射resources/下全部的URL，包括子路径（即接多个/）
+
+        c.使用< mvc:default-servlet-handler />
+          <mvc:default-servlet-handler/>
+
+          上面的配置会把 “/**” url,注册到 SimpleUrlHandlerMapping 的 urlMap 中,把对静态资源的访问由 HandlerMapping 转到 org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler 处理并返回.
+
+          DefaultServletHttpRequestHandler就是使用各个容器默认的servlet。
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+二、视图解析器
+
+        <!-- 对模型视图名称的解析，在请求时模型视图名称添加前后缀
+        <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+            <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+            <property name="prefix" value="/"/>
+            <property name="suffix" value=".jsp"/>
+        </bean>
+        -->
+        <bean  class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+            <property name="order" value="10"></property>
+            <property name="prefix" value="/"></property>
+            <property name="contentType" value="text/html"></property>
+        </bean>
+
+        而后就能够正常配置视图解析html了，相关配置以下：spring
+
+        <bean  class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+            <property name="templateLoaderPath">
+                <value>/WEB-INF/pages/</value>
+            </property>
+        </bean>
+        <bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+            <property name="contentType" value="text/html;charset=UTF-8"></property>
+            <property name="suffix" value=".html" />
+        </bean>
